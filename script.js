@@ -51,17 +51,17 @@ document.addEventListener("DOMContentLoaded", function () {
   const allButtonsProduct = document.querySelectorAll("#product-list .product button");
  
 
+  /* This code snippet is selecting all the buttons inside the product list in the DOM and adding a
+  click event listener to each button. When a button is clicked, it retrieves the product id from
+  the clicked button's attributes, finds the corresponding product object from the `products` array
+  based on the id, adds that product to the `cart` array, and then calls the `renderCartItem`
+  function to display the added product in the cart section on the webpage. */
   allButtonsProduct.forEach((button) => {
     button.addEventListener("click", function (e) {
       const productId = e.target.attributes[0].value;
       const product = products.find((p) => p.id === parseInt(productId));
       cart.push(product);
       //console.log(cart);
-      
-
-      
-
-
       renderCartItem(product);
     });
   });

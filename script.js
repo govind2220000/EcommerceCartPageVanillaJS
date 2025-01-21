@@ -13,7 +13,7 @@ document.addEventListener("DOMContentLoaded", function () {
   ];
 
   //Create an empty cart Array for storing Items inside the cart
-  const cart = [];
+  let cart = [];
 
   //Crete a variable for storing the total Price of the Items inside the Cart
   let totalCartPrice = 0;
@@ -48,23 +48,45 @@ document.addEventListener("DOMContentLoaded", function () {
   the clicked button's attributes, finds the corresponding product object from the `products` array
   based on the id, adds that product to the `cart` array, and then calls the `renderCartItem`
   function to display the added product in the cart section on the webpage. */
-  const allButtons = document.querySelectorAll("#product-list .product button");
+  const allButtonsProduct = document.querySelectorAll("#product-list .product button");
+ 
 
-  allButtons.forEach((button) => {
+  allButtonsProduct.forEach((button) => {
     button.addEventListener("click", function (e) {
       const productId = e.target.attributes[0].value;
       const product = products.find((p) => p.id === parseInt(productId));
       cart.push(product);
+      //console.log(cart);
+      
+
+      
+
+
       renderCartItem(product);
     });
   });
 
-  /**
-   * Renders a single product in the cart section of the webpage.
-   * If the cart is not empty, it adds the product to the cart list and updates the total price.
-   * If the cart is empty, it shows the empty cart message and hides the cart total section.
-   * @param {Object} product - An object representing the product with id, name, and price properties
-   */
+  
+/**
+ * Renders a product item in the shopping cart section of the webpage.
+ *
+ * This function updates the shopping cart display by adding a product item to it. 
+ * It handles both scenarios: 
+ * 1. When the cart becomes non-empty, it hides the empty cart message and shows the cart total section.
+ * 2. When a product is added, it creates a new cart item element, displaying the product's name and price, 
+ *    and includes a delete button to remove the product from the cart.
+ *
+ * The delete button functionality:
+ * - Adjusts the total cart price by deducting the deleted product's price.
+ * - Updates the total price displayed on the webpage.
+ * - Removes the specific product item from the cart display.
+ * - Removes the specific product item from the global cart variable as well 
+ * 
+ * Every time a product is added, the total cart price is updated and displayed.
+ *
+ * @param {Object} product - The product object to be added to the cart, containing `id`, `name`, and `price`.
+ */
+
   function renderCartItem(product) {
     // If the cart is empty, show empty cart message and hide cart total section
     if (cart.length === 0) {
@@ -79,7 +101,40 @@ document.addEventListener("DOMContentLoaded", function () {
       const element = document.createElement("div");
 
       // Set the inner HTML of the element with the product name and price
-      element.innerHTML = `<span>${product.name} - $${product.price}</span> `;
+      element.innerHTML = `<span>${product.name} - $${product.price}</span><button data-id="${product.id}">Delete</button> `;
+
+      /* The line `const cartItemToDeleteBtn = element.querySelector("button")` is selecting the button
+      element within the newly created product element in the cart. This line is specifically
+      targeting the button element within the `element` div that represents a product in the cart. */
+      const cartItemToDeleteBtn = element.querySelector("button")
+
+      /**
+       * In the anonymous function, this refers to the button element itself.
+
+       * In the arrow function, this retains the value from the enclosing context. 
+      */ 
+      
+      /* This code snippet is adding a click event listener to the delete button of each product in the
+      cart. When the delete button is clicked, the following actions are performed: 
+      
+      * We are decreasing the cart price on basis of product deleted
+
+      * We are changing the totalPrice Text on DOM
+
+      * We are removing the particular product div element from Shopping Cart Container
+
+      * We are removing the particular product from the global car variable as well.
+      
+      */
+      cartItemToDeleteBtn.addEventListener("click",(e)=>{
+        totalCartPrice -= product.price;
+        totalPrice.innerText = `$${totalCartPrice.toFixed(2)}`;
+        e.target.parentElement.remove()
+        cart = cart.filter((item)=> item.id != product.id)
+        //console.log(cart);
+        
+        
+      })
 
       // Set a CSS class to style the product element in the cart
       element.classList.add("product");
@@ -87,11 +142,20 @@ document.addEventListener("DOMContentLoaded", function () {
       // Add the new element to the cart list
       cartItems.appendChild(element);
 
+
+
       // Update the total price
       totalCartPrice += product.price;
-      totalPrice.innerText = `$${totalCartPrice.toFixed()}`;
+      totalPrice.innerText = `$${totalCartPrice.toFixed(2)}`;
+
     }
   }
+
+  
+  
+  
+
+  
 
   // The `checkoutBtn.addEventListener("click", () => { ... });` code snippet is adding a click event
   // listener to the checkout button on the webpage. When the checkout button is clicked, the following
